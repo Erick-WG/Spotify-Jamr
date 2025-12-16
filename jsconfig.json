@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+        "@/*": ["src/*"],
+        "@pages/*": ["src/pages/*"],
+        "@components/*": ["src/components/*"],
+        "@assets/*": ["src/assets/*"],
+        "@css/*": ["src/assets/css/*"]
+    },
+    "jsx": "react-jsx"
+    },
+    "include": ["src"]
+}
