@@ -1,32 +1,40 @@
 import React from 'react'
 
-const containerStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  width: '100%'
-}
+// styling
+import styles from '@css/PlayList.module.css'
 
-const headingStyle = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  color: '#333',
-  borderBottom: '2px solid #1db954',
-  padding: '10px 15px',
-  paddingBottom: '10px',
-  width: '90%',
-  textAlign: 'center'
-}
+
+// assets
+import saveIcon from '@assets/Primary_Logo_Black_CMYK.svg'
+
 
 const PlayList = () => {
   return (
-    <div style={containerStyle}>
-      <div style={headingStyle}>
+    <div className={styles.container}>
+      <div className={styles.heading}>
         <h3>My Plalist</h3>
         <p>STS</p>
       </div>
-      {/* Playlist items would go here */}
+
+      {/* playlist container */}
+      <div>
+        <p>Your playlist is currently empty.</p>
+        {/* Playlist items would go here */}
+      </div>
+
+      {/* save button */}
+      {/* consitionally render create and save buttons */}
+      <div>
+        <button 
+          className={styles.saveButton}>
+          <img 
+            src={saveIcon} 
+            alt="Save Icon" 
+            className={styles.saveIcon} 
+          />
+            Save Playlist
+        </button>
+      </div>
     </div>
   )
 }
