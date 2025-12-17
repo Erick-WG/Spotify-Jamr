@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // import { useState } from 'react'
 
 
@@ -14,6 +15,10 @@ import Track from '@components/Track.jsx'
 
 
 
+// variables.
+const url = 'https://api.spotify.com/v1/search?q='
+
+
 
 function App() {
   
@@ -26,14 +31,17 @@ function App() {
       <div className={styles.app}>
         <div className={styles.aside}>
           <PlayList />
-          <TrackList />
-          <Track />
         </div>
 
         <div className={styles.main}>
           <SearchBar />
           <h1 className={styles.heading}>Good music, good life</h1>
-          <SearchResults />
+          {/* <SearchResults /> */}
+
+          {/* results container */}
+          <div className={styles.resultsContainer}>
+            <TrackList />
+          </div>
         </div>
       </div>
     </div>
