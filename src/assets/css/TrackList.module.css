@@ -1,0 +1,55 @@
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    list-style-type: none;
+    padding: 0;
+}
+
+.albumContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    width: 100%;
+    height: auto;
+    padding: 15px 20px;
+    background-color: #f9f9f9;
+}
+
+.album {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+}
+
+.song {
+    font-weight: bold;
+    color: hsla(200, 100%, 20%, 1.00);
+}
+
+.songTag {
+    font-style: italic;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.heading {
+    margin-bottom: 15px;
+}
+
+.addButtonContainer {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+
+.addButton {
+    align-self: center;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
