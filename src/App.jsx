@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-// import { useState } from 'react'
+import { useState } from 'react'
 
 
 // styling
@@ -20,7 +20,7 @@ const url = 'https://api.spotify.com/v1/search?q='
 
 
 // data
-const tracks = [
+const tracksMockData = [
   {
     id: 1,
     songName: 'Track One',
@@ -117,6 +117,24 @@ const tracks = [
 
 
 function App() {
+  // state to store fetched tracks to share with results then create a copy for playlist.
+  const [tracks, setTracks] = useState(tracksMockData);
+
+  // playlist tracks state, add a handler to add and remove tracks from playlist.
+  const [playlistTracks, setPlaylistTracks] = useState([]);
+
+  // adding to playlist.
+  const addToPlaylist = (track) => {
+    // check if track is already in playlist
+    if (playlistTracks.find((item) => item.id === track.id)) {
+      return;
+    }
+    setPlaylistTracks([...playlistTracks, track]);
+  };
+
+  const removeFromPlaylist = (track) => {
+    setPlaylistTracks(playlistTracks.filter((item) => item.id !== track.id));
+  };
   
 
   return (
@@ -125,8 +143,12 @@ function App() {
         <h1>Jam Tunr</h1>
       </div>
       <div className={styles.app}>
-        <div className={styles.aside}>
-          <PlayList />
+        <div className={styles.asideContainer}>
+          <div className={styles.aside}>
+            {/* custon track list here to save to spotify. */}
+            <PlayList tracks={playlistTracks} removeFromPlaylist={removeFromPlaylist} />
+          </div>
+          {/* TODO: future add, media player below the playlist */}
         </div>
 
         <div className={styles.main}>
@@ -136,7 +158,7 @@ function App() {
 
           {/* results container */}
           <div className={styles.resultsContainer}>
-            <TrackList tracks={tracks}/>
+            <TrackList tracks={tracks} addToPlaylist={addToPlaylist} />
           </div>
         </div>
       </div>

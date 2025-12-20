@@ -20,6 +20,47 @@
     text-align: center;
 }
 
+.list {
+    width: 100%;
+    max-height: 40vh;
+    height: 100%;
+    overflow-y: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    list-style: none;
+}
+
+.songItemContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    padding: 10px 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+.songItem {
+    display: flex;
+    flex-direction: column;
+}
+
+.songName{
+    color:#004466;
+    font-weight: 600;
+}
+
+.artist{
+    color:#666666;
+    font-size: 0.9em;
+}
+
+
+.removeButton {
+    cursor: pointer;
+    color: #ff4444;
+    font-size: 0.9em;
+}
+
 .saveButton {
     display: flex;
     align-items: center;

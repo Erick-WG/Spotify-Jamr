@@ -23,9 +23,18 @@
     gap: 20px;
 }
 
-.aside {
+.asideContainer {
     position: sticky;
     top: 20px;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    gap: 50px;
+}
+
+.aside {
+    /* position: sticky;
+    top: 20px; */
     width: 300px;
     min-height: 50vh;
     max-height: 70vh;
@@ -33,7 +42,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-items: space-between;
     padding: 10px;
     background-color: #ffffff;
     color: #333333;
