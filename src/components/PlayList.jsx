@@ -7,15 +7,23 @@ import styles from '@css/PlayList.module.css'
 // assets
 import saveIcon from '@assets/Primary_Logo_Black_CMYK.svg'
 
-const PlayList = ({tracks, removeFromPlaylist}) => {
+const PlayList = ({name, updatePlaylistName, tracks, removeFromPlaylist}) => {
 
-  const [playlistName, setPlaylistName] = useState(null)
+  const [playlistName, setPlaylistName] = useState(name)
   
 
-  const handleAddPlaylistName = (e) => {
+  const handleAddPlaylistName = () => {
+    updatePlaylistName(playlistName);
+  }
+
+  // letting user update playlist name by clicking on it.
+  const handleClickUpdate = () => {
+    updatePlaylistName(null);
+  }
+
+  const handleChange = (e) => {
     e.preventDefault()
-    const { value } = e.target;
-    setPlaylistName(value);
+    setPlaylistName(e.target.value);
   }
 
   const handleRemove = (track) => {
@@ -26,15 +34,15 @@ const PlayList = ({tracks, removeFromPlaylist}) => {
     <div className={styles.container}>
       <div className={styles.heading}>
 
-        <h3>
-          {playlistName == null ? (
+        <div>
+          {name == null || name == '' ? (
             <form onSubmit={handleAddPlaylistName}>
-              <input name='playlist name' value={playlistName}/>
+              <input name='playlist name' value={playlistName} onChange={handleChange} placeholder='Add Playlist Name...' className={styles.input}/>
             </form>
-            ) : playlistName}
-        </h3>
+            ) : <h3 onClick={handleClickUpdate}>{name}</h3>}
+        </div>
 
-        <p>{tracks.length} tracks</p>
+        <p>{tracks.length}</p>
       </div>
 
       {/* playlist container */}

@@ -20,6 +20,17 @@
     text-align: center;
 }
 
+.input {
+    font-size: 1.17em;
+    border: none;
+}
+
+.input:focus, .input:hover, .input:active {
+    outline: none;
+    border: none;
+    border-left: 1px solid #1db954;
+}
+
 .list {
     width: 100%;
     max-height: 40vh;

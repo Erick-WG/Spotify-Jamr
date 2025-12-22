@@ -121,7 +121,13 @@ function App() {
   const [tracks, setTracks] = useState(tracksMockData);
 
   // playlist tracks state, add a handler to add and remove tracks from playlist.
+  const [name, setName] = useState(null);
   const [playlistTracks, setPlaylistTracks] = useState([]);
+
+  // update the playlist by name.
+  const updatePlaylistName = (name) => {
+    setName(name);
+  };
 
   // adding to playlist.
   const addToPlaylist = (track) => {
@@ -146,7 +152,7 @@ function App() {
         <div className={styles.asideContainer}>
           <div className={styles.aside}>
             {/* custon track list here to save to spotify. */}
-            <PlayList tracks={playlistTracks} removeFromPlaylist={removeFromPlaylist} />
+            <PlayList name={name} updatePlaylistName={updatePlaylistName} tracks={playlistTracks} removeFromPlaylist={removeFromPlaylist} />
           </div>
           {/* TODO: future add, media player below the playlist */}
         </div>
