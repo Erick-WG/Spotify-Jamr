@@ -28,7 +28,8 @@
 .input:focus, .input:hover, .input:active {
     outline: none;
     border: none;
-    border-left: 1px solid #1db954;
+    color: oklch(51.028% 0.00006 271.152);
+    background-color: transparent;
 }
 
 .list {

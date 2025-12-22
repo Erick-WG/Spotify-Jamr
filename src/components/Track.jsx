@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 
 // assets
@@ -11,18 +11,31 @@ import styles from '@css/TrackList.module.css'
 
 // add button functionality will be added later, remember to pass props for added state
 
-const Track = ({track, index, addToPlaylist}) => {
+const Track = ({track, index, addToPlaylist, saveUri}) => {
 
   const [addedTrack, setAddedTrack] = useState(false);
+
+
+    // toggle added state with a timer to reset after some time.
+    useEffect(() => {
+      let timer;
+      if (addedTrack) {
+        timer = setTimeout(() => {
+          setAddedTrack(false);
+        }, 1000); // Reset after 0.5 seconds
+      }
+      return () => clearTimeout(timer);
+    }, [addedTrack]);
+
   
     const toggleAddedState = () => {
-      console.log('toggling added state');
       setAddedTrack(true);
     }
 
   const handleClick = () => {
     toggleAddedState();
     addToPlaylist(track);
+    saveUri(track);
   }
 
   return (

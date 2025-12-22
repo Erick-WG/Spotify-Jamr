@@ -7,7 +7,7 @@ import styles from '@css/PlayList.module.css'
 // assets
 import saveIcon from '@assets/Primary_Logo_Black_CMYK.svg'
 
-const PlayList = ({name, updatePlaylistName, tracks, removeFromPlaylist}) => {
+const PlayList = ({name, updatePlaylistName, tracks, removeFromPlaylist, deleteUri}) => {
 
   const [playlistName, setPlaylistName] = useState(name)
   
@@ -28,6 +28,7 @@ const PlayList = ({name, updatePlaylistName, tracks, removeFromPlaylist}) => {
 
   const handleRemove = (track) => {
     removeFromPlaylist(track);
+    deleteUri(track);
   }
 
   return (

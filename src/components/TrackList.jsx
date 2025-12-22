@@ -8,7 +8,7 @@ import styles from '@css/TrackList.module.css'
 import Track from './Track'
 
 
-const TrackList = ({tracks, addToPlaylist}) => {
+const TrackList = ({tracks, addToPlaylist, saveUri}) => {
 
   return (
     <div style={{width: '70%'}}>
@@ -16,7 +16,7 @@ const TrackList = ({tracks, addToPlaylist}) => {
         <ul className={styles.list}>
           {/* tracks array traversal */}
             {tracks.map((track, index) => (
-                <Track track={track} index={index} addToPlaylist={addToPlaylist} />
+                <Track track={track} index={index} addToPlaylist={addToPlaylist} saveUri={saveUri} />
             ))}
         </ul>
     </div>
