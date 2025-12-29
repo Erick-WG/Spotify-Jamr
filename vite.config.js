@@ -12,6 +12,7 @@ export default defineConfig({
       '@components': path.resolve(__dirname, '/src/components'),
       '@assets': path.resolve(__dirname, '/src/assets'),
       '@css': path.resolve(__dirname, '/src/assets/css'),
+      '@apiClient': path.resolve(__dirname, '/src/apiClient'),
     },
   },
   plugins: [

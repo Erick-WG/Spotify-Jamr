@@ -8,15 +8,15 @@ import styles from '@css/App.module.css'
 
 // components
 import SearchBar from '@components/SearchBar.jsx'
-import SearchResults from '@components/SearchResults.jsx'
+import SearchResults from '@components/SearchResults'
 import PlayList from '@components/PlayList.jsx'
 import TrackList from '@components/TrackList.jsx'
-import Track from '@components/Track.jsx'
+import Header from '@components/Header'
 
 
 
 // variables.
-const url = 'https://api.spotify.com/v1/search?q='
+// const url = 'https://api.spotify.com/v1/search?q='
 
 
 // data
@@ -128,21 +128,100 @@ const tracksMockData = [
   }
 ]
 
+const urlParams = new URLSearchParams(window.location.search);
+let code = urlParams.get('code');
+
+if (code) {
+  window.localStorage.setItem('auth_code', code);
+  window.history.replaceState({}, '', window.location.pathname);
+} else {
+  code = window.localStorage.getItem('auth_code');
+}
+
 
 function App() {
+  //* Access Token.
+  // get access token through authorization code flow with PKCE.
+  // use a login button to trigger the getAuth function from apiClient so we can have an auth code we can exchange for an access token.
+  // store the access token in local storage for use in fetch requests.
+  // const accessToken = localStorage.getItem('access_token');
+
+  // get auth token first and store it locally
+  // useEffect hook allows us to get the auth code and code verifyer on first load of the app.
+  useEffect(() => {
+    import('@apiClient/authCodes.js').then(({ default: getAuth }) => {
+      if (code == undefined && code == null) {
+        getAuth()
+      }
+    });
+  }, []);
+
+  // Auth and access token states.
+  const [loginStatus, setLoginStatus] = useState(false);
+  const [accessToken, setAccessToken] = useState('');
+  
+  //* States.
+
+  // search term state to pass to search bar and use in fetch.
+  // add the search term to the fetch URL to get real data from Spotify API.
+  // data retrieval and state update logic will be needed.
+  // pass data to tracks state so that our app can render real search results.
+  const [searchTerm, setSearchTerm] = useState('');
+
+
   // state to store fetched tracks to share with results then create a copy for playlist.
   const [tracks, setTracks] = useState(tracksMockData);
 
 
-
   //* playlist tracks state, add a handler to add and remove tracks from playlist.
-  const [name, setName] = useState(null);
+  const [playlistName, setPlaylistName] = useState(null);
   const [uriList, setUriList] = useState([]);
   const [playlistTracks, setPlaylistTracks] = useState([]);
 
+
+  //* Handlers. 
+
+  // login handler to trigger getToken function.
+  // we can get an access token when the user chooses to login
+  const handleLogin = () => {
+
+    //* login to get the access token to fetch data 
+    if (code !== undefined || code !== null) {
+      import('@/apiClient/getToken.js').then(({ default: getToken }) => {
+        getToken(code)
+        setLoginStatus(true);
+      });
+    }
+  };
+
+  // clearing the local storage on logout 
+  const handleLogout = () => {
+    localStorage.clear();
+    setAccessToken(null);
+    setLoginStatus(false);
+    window.location.href = '/';
+  };
+
+  // search handlers here.
+  const handleSearch = (term) => {
+    // getting and saving access token from the local storage to our app.
+    const access_token = window.localStorage.getItem('access_token')
+    
+
+    if(access_token){
+      setAccessToken(access_token)
+      console.log(access_token)
+    }
+    console.log(accessToken)
+    setSearchTerm(term);
+  };
+
+
+  // playlist handlers.
+
   // update the playlist by name.
   const updatePlaylistName = (name) => {
-    setName(name);
+    setPlaylistName(name);
   };
 
   // adding to playlist.
@@ -163,7 +242,7 @@ function App() {
     setUriList([...uriList, track.uri]);
   }
 
-  // deleting uri's for reference.
+  // deleting uri's when a song is removed from the saved playlist.
   const deleteUri = (track) => {
     setUriList(uriList.filter((uri) => uri !== track.uri));
   }
@@ -174,31 +253,30 @@ function App() {
   };
 
   // end playlist handlers.
-  
+
 
   return (
     <div>
-      <div className={styles.logo}>
-        <h1>Jam Tunr</h1>
-      </div>
+      <Header isLogin={loginStatus} handleLogin={handleLogin} handleLogout={handleLogout} />
       <div className={styles.app}>
         <div className={styles.asideContainer}>
           <div className={styles.aside}>
             {/* custon track list here to save to spotify. */}
-            <PlayList name={name} updatePlaylistName={updatePlaylistName} tracks={playlistTracks} removeFromPlaylist={removeFromPlaylist} deleteUri={deleteUri} />
+            <PlayList name={playlistName} updatePlaylistName={updatePlaylistName} tracks={playlistTracks} removeFromPlaylist={removeFromPlaylist} deleteUri={deleteUri} />
           </div>
           {/* TODO: future add, media player below the playlist */}
         </div>
 
         <div className={styles.main}>
-          <SearchBar />
+          <SearchBar search={handleSearch} />
           <h1 className={styles.heading}>Good music, good life</h1>
-          {/* <SearchResults /> */}
+
+          <SearchResults searchTerm={searchTerm} tracks={tracks} addToPlaylist={addToPlaylist} saveUri={saveUri}/>
 
           {/* results container */}
-          <div className={styles.resultsContainer}>
+          {/* <div className={styles.resultsContainer}>
             <TrackList tracks={tracks} addToPlaylist={addToPlaylist} saveUri={saveUri} />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

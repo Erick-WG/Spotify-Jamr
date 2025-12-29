@@ -73,6 +73,15 @@
     font-size: 0.9em;
 }
 
+
+.emptyMessage {
+    color: #999;
+    font-style: italic;
+    align-self: center;
+}
+
+
+
 .saveButton {
     display: flex;
     align-items: center;

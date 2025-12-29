@@ -1,11 +1,43 @@
 .logo {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     font-size: 0.7rem;
     font-weight: bold;
     color: #1db954;
-    margin: 10px 0;
+    margin: 10px 20px;
+}
+
+.login {
+    cursor: pointer;
+    color: #333;
+    font-size: 1rem;
+    /* text-transform: uppercase; */
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.login:hover {
+    color: #1db954;
+}
+
+.logout {
+    cursor: pointer;
+    color: #333;
+    font-size: 1rem;
+    /* text-transform: uppercase; */
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.logout:hover {
+    color: #ff0000;
+}
+
+.user {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #797979;
 }
 
 .app {

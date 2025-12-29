@@ -1,13 +1,12 @@
 import React from 'react'
+import styles from '@css/App.module.css'
 
-const SearchResults = () => {
+import TrackList from '@components/TrackList'
+
+const SearchResults = ({searchTerm, tracks, addToPlaylist, saveUri}) => {
   return (
-    <div>
-      <div>
-        <h3>some good music</h3>
-        <p>by some artist</p>
-        <button>Add to Playlist</button>
-      </div>
+    <div className={styles.resultsContainer}>
+      <TrackList searchTerm={searchTerm} tracks={tracks} addToPlaylist={addToPlaylist} saveUri={saveUri}/>
     </div>
   )
 }

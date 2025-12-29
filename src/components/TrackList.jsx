@@ -8,17 +8,18 @@ import styles from '@css/TrackList.module.css'
 import Track from './Track'
 
 
-const TrackList = ({tracks, addToPlaylist, saveUri}) => {
+const TrackList = ({searchTerm, tracks, addToPlaylist, saveUri}) => {
 
   return (
     <div style={{width: '70%'}}>
-        <h3 className={styles.heading}>Track List</h3>
-        <ul className={styles.list}>
-          {/* tracks array traversal */}
-            {tracks.map((track, index) => (
-                <Track track={track} index={index} addToPlaylist={addToPlaylist} saveUri={saveUri} />
-            ))}
-        </ul>
+      {searchTerm ? (<p className={styles.heading}>Showing results for {searchTerm}...</p>) : ''}
+      
+      <ul className={styles.list}>
+        {/* tracks array traversal */}
+          {tracks.map((track, index) => (
+              <Track track={track} index={index} addToPlaylist={addToPlaylist} saveUri={saveUri} />
+          ))}
+      </ul>
     </div>
   )
 }

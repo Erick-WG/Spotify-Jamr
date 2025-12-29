@@ -12,7 +12,8 @@ const PlayList = ({name, updatePlaylistName, tracks, removeFromPlaylist, deleteU
   const [playlistName, setPlaylistName] = useState(name)
   
 
-  const handleAddPlaylistName = () => {
+  const handleAddPlaylistName = (e) => {
+    e.preventDefault();
     updatePlaylistName(playlistName);
   }
 
@@ -66,23 +67,26 @@ const PlayList = ({name, updatePlaylistName, tracks, removeFromPlaylist, deleteU
             ))}
           </ul>
         ) : (
-          <p>Your playlist is currently empty</p>
+          <p className={styles.emptyMessage}>Your playlist is currently empty</p>
         )}
       </div>
 
       {/* save button */}
-      {/* consitionally render create and save buttons */}
-      <div>
-        <button 
-          className={styles.saveButton}>
-          <img 
-            src={saveIcon} 
-            alt="Save Icon" 
-            className={styles.saveIcon} 
-          />
-            Save Playlist
-        </button>
-      </div>
+      {/* conditionally render create and save buttons */}
+      
+      {tracks.length > 0 ? (
+        <div>
+          <button 
+            className={styles.saveButton}>
+            <img 
+              src={saveIcon} 
+              alt="Save Icon" 
+              className={styles.saveIcon} 
+            />
+              Save Playlist
+          </button>
+        </div>
+      ) : null}
     </div>
   )
 }
