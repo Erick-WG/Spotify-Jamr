@@ -55,8 +55,8 @@ const PlayList = ({name, updatePlaylistName, tracks, removeFromPlaylist, deleteU
             {tracks.map((track) => (
               <li key={track.id} className={styles.songItemContainer}>
                 <div className={styles.songItem}>
-                  <span className={styles.songName}>{track.songName}</span>
-                  <span className={styles.artist}>-{track.artist}</span>
+                  <span className={styles.songName}>{track.name}</span>
+                  <span className={styles.artist}>-{Array.isArray(track.artists) ? track.artists.map(artist => artist.name).join(', ') : track.artists[0].name}</span>
                 </div>
                 <div 
                   className={styles.removeButton}

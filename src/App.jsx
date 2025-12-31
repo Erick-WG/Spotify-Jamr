@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 
 // styling
@@ -23,111 +23,112 @@ import Header from '@components/Header'
 const tracksMockData = [
   {
     id: 1,
-    songName: 'Track One',
+    name: 'Track One',
     artist: 'Artist A',
     album: 'Album Alpha',
     uri: 'spotify:track:0000000000000000000001'
   },
   {
     id: 2,
-    songName: 'Track Two',
+    name: 'Track Two',
     artist: 'Artist B',
     album: 'Album Beta',
     uri: 'spotify:track:0000000000000000000002'
   },
   {
     id: 3,
-    songName: 'Track Three',
+    name: 'Track Three',
     artist: 'Artist C',
     album: 'Album Gamma',
     uri: 'spotify:track:0000000000000000000003'
   },
   {
     id: 4,
-    songName: 'Midnight Echo',
+    name: 'Midnight Echo',
     artist: 'Luna Sky',
     album: 'Starlight Dreams',
     uri: 'spotify:track:0000000000000000000004'
   },
   {
     id: 5,
-    songName: 'Electric Vibes',
+    name: 'Electric Vibes',
     artist: 'Neon Pulse',
     album: 'Synthetic Waves',
     uri: 'spotify:track:0000000000000000000005'
   },
   {
     id: 6,
-    songName: 'Ocean Breeze',
+    name: 'Ocean Breeze',
     artist: 'Coastal Tides',
     album: 'Sea Songs',
     uri: 'spotify:track:0000000000000000000006'
   },
   {
     id: 7,
-    songName: 'Urban Jazz',
+    name: 'Urban Jazz',
     artist: 'City Sounds',
     album: 'Metropolitan Groove',
     uri: 'spotify:track:0000000000000000000007'
   },
   {
     id: 8,
-    songName: 'Forest Whispers',
+    name: 'Forest Whispers',
     artist: 'Nature Calls',
     album: 'Woodland Tales',
     uri: 'spotify:track:0000000000000000000008'
   },
   {
     id: 9,
-    songName: 'Neon Lights',
+    name: 'Neon Lights',
     artist: 'Synth Wave',
     album: 'Future Retro',
     uri: 'spotify:track:0000000000000000000009'
   },
   {
     id: 10,
-    songName: 'Golden Hour',
+    name: 'Golden Hour',
     artist: 'Sunset Riders',
     album: 'Desert Dreams',
     uri: 'spotify:track:0000000000000000000010'
   },
   {
     id: 11,
-    songName: 'Cosmic Journey',
+    name: 'Cosmic Journey',
     artist: 'Space Explorers',
     album: 'Beyond Horizons',
     uri: 'spotify:track:0000000000000000000011'
   },
   {
     id: 12,
-    songName: 'Rhythm of Life',
+    name: 'Rhythm of Life',
     artist: 'Heartbeat Collective',
     album: 'Living Moments',
     uri: 'spotify:track:0000000000000000000012'
   },
   {
     id: 13,
-    songName: 'Velvet Nights',
+    name: 'Velvet Nights',
     artist: 'Smooth Operators',
     album: 'Late Night Sessions',
     uri: 'spotify:track:0000000000000000000013'
   },
   {
     id: 14,
-    songName: 'Dancing Stars',
+    name: 'Dancing Stars',
     artist: 'Celestial Beats',
     album: 'Galactic Grooves',
     uri: 'spotify:track:0000000000000000000014'
   },
   {
     id: 15,
-    songName: 'Autumn Leaves',
+    name: 'Autumn Leaves',
     artist: 'Season Keepers',
     album: 'Through the Seasons',
     uri: 'spotify:track:0000000000000000000015'
   }
 ]
 
+// Get the auth token from the url (, save it to local storage) when our app refreshes after users grant access permission and clear the code from the url.
 const urlParams = new URLSearchParams(window.location.search);
 let code = urlParams.get('code');
 
@@ -150,17 +151,22 @@ function App() {
   // useEffect hook allows us to get the auth code and code verifyer on first load of the app.
   useEffect(() => {
     import('@apiClient/authCodes.js').then(({ default: getAuth }) => {
+      // only triger the access request when we don't have an auth token we can exchange for an access token.
       if (code == undefined && code == null) {
         getAuth()
       }
     });
   }, []);
 
+
+
+  //* States.
+
+
   // Auth and access token states.
   const [loginStatus, setLoginStatus] = useState(false);
   const [accessToken, setAccessToken] = useState('');
   
-  //* States.
 
   // search term state to pass to search bar and use in fetch.
   // add the search term to the fetch URL to get real data from Spotify API.
@@ -170,11 +176,11 @@ function App() {
 
 
   // state to store fetched tracks to share with results then create a copy for playlist.
-  const [tracks, setTracks] = useState(tracksMockData);
+  const [tracks, setTracks] = useState([]);
 
 
   //* playlist tracks state, add a handler to add and remove tracks from playlist.
-  const [playlistName, setPlaylistName] = useState(null);
+  const [playlistName, setPlaylistName] = useState('');
   const [uriList, setUriList] = useState([]);
   const [playlistTracks, setPlaylistTracks] = useState([]);
 
@@ -182,13 +188,19 @@ function App() {
   //* Handlers. 
 
   // login handler to trigger getToken function.
-  // we can get an access token when the user chooses to login
+  // we can get an access token when the user chooses to login to our app.
   const handleLogin = () => {
+
+    // TODO: set login status to true if an access token has not expired.
 
     //* login to get the access token to fetch data 
     if (code !== undefined || code !== null) {
+
+      // TODO: Authenticate only when we don't have an auth token and the access token has expired. 
       import('@/apiClient/getToken.js').then(({ default: getToken }) => {
-        getToken(code)
+
+        // async call to get an access token
+        getToken(code).then(token => setAccessToken(token)).catch(error => console.log(error.message))
         setLoginStatus(true);
       });
     }
@@ -203,18 +215,56 @@ function App() {
   };
 
   // search handlers here.
-  const handleSearch = (term) => {
+  const handleSearch = async (term) => {
     // getting and saving access token from the local storage to our app.
+    setSearchTerm(term)
     const access_token = window.localStorage.getItem('access_token')
-    
 
-    if(access_token){
-      setAccessToken(access_token)
-      console.log(access_token)
+    if (!term || !accessToken) return;
+
+    // fetching tracks only when we have an access token and a term
+    try {
+      const endpoint = 'https://api.spotify.com/v1/search?'
+      const requestUrl = new URLSearchParams({
+        q: term,
+        type: 'track',
+        limit: 5
+      })
+      const request = endpoint + requestUrl.toString()
+      const response = await fetch(request, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      
+      const data = await response.json()
+      const handleTracks = (array) => {
+        if (array.length > 0){
+          array.map((track, index) => {
+            // destructuring track objects to get the required data for our app.
+            const {id, name, artists, album, uri} = track
+            let song = {
+              number: index,
+              id,
+              name,
+              artists,
+              album,
+              uri
+            } 
+            console.log(song)
+            setTracks((songs)=>([...songs, song]))
+          })
+        }
+      }
+      handleTracks(data.tracks.items)
+    } catch (error) {
+      console.error('Fetch error:', error.message)
     }
-    console.log(accessToken)
-    setSearchTerm(term);
   };
+  // end search hanler
 
 
   // playlist handlers.
@@ -268,10 +318,10 @@ function App() {
         </div>
 
         <div className={styles.main}>
-          <SearchBar search={handleSearch} />
+          <SearchBar searchTerm={searchTerm} search={handleSearch} accessToken={accessToken}/>
           <h1 className={styles.heading}>Good music, good life</h1>
 
-          <SearchResults searchTerm={searchTerm} tracks={tracks} addToPlaylist={addToPlaylist} saveUri={saveUri}/>
+          {tracks && <SearchResults searchTerm={searchTerm} tracks={tracks} addToPlaylist={addToPlaylist} saveUri={saveUri}/>}
 
           {/* results container */}
           {/* <div className={styles.resultsContainer}>

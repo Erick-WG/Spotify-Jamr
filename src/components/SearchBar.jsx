@@ -2,29 +2,30 @@ import React, { useState } from 'react'
 import styles from '@css/SearchBar.module.css'
 
 const SearchBar = ({ search }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  // {, addTracks}
+  const [term, setTerm] = useState('');
+  // const [tracksFound, setTracksFound] = useState([])
 
-  const handleSubmit = (e) => {
+  const handleSearch = (e) => {
     e.preventDefault();
-    if(searchTerm !== ''){
-      search(searchTerm);
-      setSearchTerm('');
-    }
+    search(term)
+    setTerm('')
   };
 
+  const handleChange = (e) => {
+    setTerm(e.target.value)
+  }
+
   return (
-    <form className={styles.searchBar} onSubmit={handleSubmit}>
+    <form className={styles.searchBar} onSubmit={handleSearch}>
       <input 
         name='searchQuery'
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        value={term}
+        onChange={handleChange}
         className={styles.searchInput} 
         placeholder='Look up some tunes...'
-        />
-      <button 
-        className={styles.searchButton}
-        type='submit'
-        >Search</button>
+      />
+      <button className={styles.searchButton} type='submit'>Search</button>
     </form>
   )
 }

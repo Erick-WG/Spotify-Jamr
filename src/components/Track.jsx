@@ -11,7 +11,7 @@ import styles from '@css/TrackList.module.css'
 
 // add button functionality will be added later, remember to pass props for added state
 
-const Track = ({track, index, addToPlaylist, saveUri}) => {
+const Track = ({track, addToPlaylist, saveUri}) => {
 
   const [addedTrack, setAddedTrack] = useState(false);
 
@@ -41,18 +41,15 @@ const Track = ({track, index, addToPlaylist, saveUri}) => {
   return (
     <li className={styles.albumContainer} key={track.id}>
       <div style={{display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center'}}>
-        {/* song data */}
-        <p>{index+1}</p>
+        <p>{`${track.number + 1} `}</p>
         <p>|</p>
         <div>
           <p>
-            <strong className={styles.song}>{track.songName}</strong> 
+            <strong className={styles.song}>{track.name}</strong> 
           </p>
-          <p className={styles.songTag}>By {track.artist} from the album {track.album}</p>
+          <p className={styles.songTag}>By {Array.isArray(track.artists) ? track.artists.map(artist => artist.name).join(', ') : track.artists[0].name} from the album {track.album["name"]}</p>
         </div>
       </div>
-
-      {/* buttons */}
       <div 
         onClick={handleClick}
         className={styles.addButtonContainer}>
