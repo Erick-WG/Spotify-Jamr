@@ -1,24 +1,81 @@
-# React + Vite
+# Spotify app clone.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a spotify clone, allowing a user to login to their spotify account and add playlists and tracks through a simplified interface built with [React](https://react.dev/learn), [Vite](https://vite.dev/) and the [Spotify web API](https://developer.spotify.com/documentation/web-api).
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## API Reference
 
-## React Compiler
+#### Before we look up some tunes
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- Learn how to authenticate from the  [Authentication docs](https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow) offered by spotify. 
+- Understand the [Access token](https://developer.spotify.com/documentation/web-api/concepts/access-token) from the spotify docs.
+- How to [Search](https://developer.spotify.com/documentation/web-api/reference/search) on spotify.
 
-Note: This will impact Vite dev & build performances.
+## Documentation
+#### Looking up some tunes.
 
-## Expanding the ESLint configuration
+1) You need to first get an [access token](https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow#request-an-access-token) following the [pcke auth flow](https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow) to gain access to a user account, our app attempts to gain an authentication code we can exchange for an access token on first load, redirecting the user to sign in to their spotify account so that we can have the auth code we can exchange for an access token later. ![A screenshot of the project](docs/images/spotify%20access.png)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
 
-    searchBar
-    SearchResults
-    PlayList
-    TrackList
-    Track
+2) When the user logs in the app starts the authorization flow to exchange the authentication code we got for an access token we can use to perforn actions on behalf of the user.
+![Login](docs/images/spotify%20login.png)
+Logged in as `Eric-WG`
+![Logged in](docs/images/spotify%20logged%20in.png)
+
+   once we have an access token, we can perform a search based on a user's query (`q: searchTerm`).
+
+```js
+const endpoint = `https://api.spotify.com/v1/search?`
+const urlParams = new URLSearchParams({
+    q: term, // query value assigned to the "q" key
+    type: 'track | album | artist',
+    ...
+})
+
+// for our app to fetch we need to configure the fetch deps object to contain our access token.
+const params = {
+    method: 'GET',
+    headers: {
+        Authorization: `Bearer ${access_token}` // aquired access token.
+    }
+}
+
+const url = endpoint.concat(urlParams.toString())
+async function getData(){
+    ...
+    const response = await fetch(url, params) 
+    ...
+}
+```
+
+get the items array from the response json object, this is where all our requested items live.
+
+```js
+...
+// tracks location.
+const data = response.json()
+const tracks = data.tracks.items // array of tracks
+...
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `access_token` | `string` | **Required**. User access_token  |
+|  `type`  |  `string`  |  **Required**. type of data being fetched  |
+
+
+3) Add a playlist name and start adding tracks.
+![search](docs/images/spotify%20add%20playlistname%20and%20track.png)
+...add more tracks to your liking.
+![add more tracks](docs/images/spotify%20add%20tracks.png)
+4) Save playlist to user account.
+![save playlist and it's tracks](docs/images/spotify%20save%20playlist.png)
+
+
+5) Verify the app is working as expected.
+   ![spotify library](docs/images/spotify%20playlist%20library.png)
+   our 3 songs have been added to the playlist, great :)
+   ![playlist preview](docs/images/spotify%20playlist.png)
+
+
+**Important Notice:** The app is fine at this point and does what I intended it to, although it does need some exception handling in the authorization process, I didn't intent to implement it now since it was a bit out of scope at the moment, I'll be adding more features and functionality as the scope broadens with time.
