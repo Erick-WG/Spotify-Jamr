@@ -38,7 +38,7 @@ function getAuth() {
     const clientId = import.meta.env.VITE_CLIENT_ID;
     const redirectUri = import.meta.env.VITE_REDIRECT_URI;
 
-    const scope = 'user-read-private user-read-email';
+    const scope = 'user-read-private user-read-email playlist-modify-private';
     const authUrl = new URL("https://accounts.spotify.com/authorize")
 
 

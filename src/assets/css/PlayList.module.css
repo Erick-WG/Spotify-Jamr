@@ -101,3 +101,13 @@
     margin-right: 4px;
     vertical-align: middle;
 }
+
+.saved {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    vertical-align: middle;
+    padding: 10px 16px 8px 16px;
+    color: #1db954;
+    font-size: 1.17rem;
+}

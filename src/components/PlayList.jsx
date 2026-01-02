@@ -7,19 +7,28 @@ import styles from '@css/PlayList.module.css'
 // assets
 import saveIcon from '@assets/Primary_Logo_Black_CMYK.svg'
 
-const PlayList = ({name, updatePlaylistName, tracks, removeFromPlaylist, deleteUri}) => {
+const PlayList = ({name, id, savePlaylistName, updatePlaylistName, tracks, removeFromPlaylist, deleteUri, savePlaylist, saved}) => {
 
   const [playlistName, setPlaylistName] = useState(name)
+  const [edit, setEdit] = useState(false)
   
-
+  
   const handleAddPlaylistName = (e) => {
     e.preventDefault();
-    updatePlaylistName(playlistName);
+    savePlaylistName(playlistName);
+    setEdit(false);
   }
+
+  const handleUpdatePlaylistName = (e) => {
+    e.preventDefault()
+    updatePlaylistName(playlistName, id)
+    setEdit(false);
+  }
+
 
   // letting user update playlist name by clicking on it.
   const handleClickUpdate = () => {
-    updatePlaylistName(null);
+    setEdit(true)
   }
 
   const handleChange = (e) => {
@@ -35,21 +44,22 @@ const PlayList = ({name, updatePlaylistName, tracks, removeFromPlaylist, deleteU
   return (
     <div className={styles.container}>
       <div className={styles.heading}>
-
-        <div>
-          {name == null || name == '' ? (
-            <form onSubmit={handleAddPlaylistName}>
-              <input name='playlist name' value={playlistName} onChange={handleChange} placeholder='Add Playlist Name...' className={styles.input}/>
-            </form>
-            ) : <h3 onClick={handleClickUpdate}>{name}</h3>}
-        </div>
-
+        {!name || name === '' ? (
+          <form onSubmit={handleAddPlaylistName}>
+            <input name='playlist name' value={playlistName} onChange={handleChange} placeholder='Add Playlist Name...' className={styles.input}/>
+          </form>
+        ) : edit ? (
+          <form onSubmit={handleUpdatePlaylistName}>
+            <input name='playlist name' value={playlistName} onChange={handleChange} placeholder={playlistName} className={styles.input}/>
+          </form>
+        ) : (
+          <h3 onClick={handleClickUpdate}>{name}</h3>
+        )}
         <p>{tracks.length}</p>
       </div>
 
       {/* playlist container */}
       <div style={{width: '100%', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px', minHeight: '150px', maxHeight: '300px', overflowY: 'auto', alignContent: 'flex-end'}}>
-        {/* Playlist items would go here */}
         {tracks.length > 0 ? (
           <ul className={styles.list}>
             {tracks.map((track) => (
@@ -58,9 +68,7 @@ const PlayList = ({name, updatePlaylistName, tracks, removeFromPlaylist, deleteU
                   <span className={styles.songName}>{track.name}</span>
                   <span className={styles.artist}>-{Array.isArray(track.artists) ? track.artists.map(artist => artist.name).join(', ') : track.artists[0].name}</span>
                 </div>
-                <div 
-                  className={styles.removeButton}
-                  onClick={() => handleRemove(track)}>
+                <div className={styles.removeButton} onClick={() => handleRemove(track)}>
                   <p>remove</p>
                 </div>
               </li>
@@ -71,22 +79,16 @@ const PlayList = ({name, updatePlaylistName, tracks, removeFromPlaylist, deleteU
         )}
       </div>
 
-      {/* save button */}
-      {/* conditionally render create and save buttons */}
-      
-      {tracks.length > 0 ? (
-        <div>
-          <button 
-            className={styles.saveButton}>
-            <img 
-              src={saveIcon} 
-              alt="Save Icon" 
-              className={styles.saveIcon} 
-            />
-              Save Playlist
-          </button>
-        </div>
-      ) : null}
+      {tracks.length > 0 && saved == false ? (
+        <button className={styles.saveButton} onClick={savePlaylist}>
+          <img src={saveIcon} alt="Save Icon" className={styles.saveIcon} />
+          Save Playlist
+        </button>
+      ) : saved ? (
+        <p className={styles.saved}>Saved</p>
+      )
+      : null
+      }
     </div>
   )
 }

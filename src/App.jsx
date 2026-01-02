@@ -141,6 +141,8 @@ if (code) {
 
 
 function App() {
+  //* States.  
+
   //* Access Token.
   // get access token through authorization code flow with PKCE.
   // use a login button to trigger the getAuth function from apiClient so we can have an auth code we can exchange for an access token.
@@ -149,6 +151,33 @@ function App() {
 
   // get auth token first and store it locally
   // useEffect hook allows us to get the auth code and code verifyer on first load of the app.
+
+  //* Auth and access token states.
+  const [user, setUser] = useState('')
+  const [loginStatus, setLoginStatus] = useState(false);
+  const [accessToken, setAccessToken] = useState('');
+
+
+  //* search term state to pass to search bar and use in fetch.
+  // add the search term to the fetch URL to get real data from Spotify API.
+  // data retrieval and state update logic will be needed.
+  // pass data to tracks state so that our app can render real search results.
+  const [searchTerm, setSearchTerm] = useState('');
+
+
+  //* state to store fetched tracks to share with results then create a copy for playlist.
+  const [tracks, setTracks] = useState([]);
+
+
+  //* playlist tracks state, add a handler to add and remove tracks from playlist.
+  const [saved, setSaved] = useState(false)
+  const [playlistName, setPlaylistName] = useState('');
+  const [uriList, setUriList] = useState([]);
+  const [playlistTracks, setPlaylistTracks] = useState([]);
+
+
+
+  //** Get an auth token when we don't have one and then fetch the user name once we have an access token. */
   useEffect(() => {
     import('@apiClient/authCodes.js').then(({ default: getAuth }) => {
       // only triger the access request when we don't have an auth token we can exchange for an access token.
@@ -156,40 +185,38 @@ function App() {
         getAuth()
       }
     });
-  }, []);
+
+    // get user profile only when the access token is available.
+    async function getProfile (){
+      if(accessToken){
+        try{
+          const response = await fetch("https://api.spotify.com/v1/me", {
+            method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
+          });
+          if(!response.ok) return
+          const data = await response.json()
+          const profileName = data.display_name
+          const userId = data.id
+
+          // saving the username
+          setUser({name: profileName, id: userId})
+        } catch (error){
+          console.log(error.message)
+        }
+      }
+    }
+
+    getProfile()
 
 
-
-  //* States.
-
-
-  // Auth and access token states.
-  const [loginStatus, setLoginStatus] = useState(false);
-  const [accessToken, setAccessToken] = useState('');
-  
-
-  // search term state to pass to search bar and use in fetch.
-  // add the search term to the fetch URL to get real data from Spotify API.
-  // data retrieval and state update logic will be needed.
-  // pass data to tracks state so that our app can render real search results.
-  const [searchTerm, setSearchTerm] = useState('');
-
-
-  // state to store fetched tracks to share with results then create a copy for playlist.
-  const [tracks, setTracks] = useState([]);
-
-
-  //* playlist tracks state, add a handler to add and remove tracks from playlist.
-  const [playlistName, setPlaylistName] = useState('');
-  const [uriList, setUriList] = useState([]);
-  const [playlistTracks, setPlaylistTracks] = useState([]);
+  }, [accessToken]);
 
 
   //* Handlers. 
 
   // login handler to trigger getToken function.
   // we can get an access token when the user chooses to login to our app.
-  const handleLogin = () => {
+  const handleLogin = async () => {
 
     // TODO: set login status to true if an access token has not expired.
 
@@ -218,17 +245,18 @@ function App() {
   const handleSearch = async (term) => {
     // getting and saving access token from the local storage to our app.
     setSearchTerm(term)
+    setTracks([])
     const access_token = window.localStorage.getItem('access_token')
 
     if (!term || !accessToken) return;
 
-    // fetching tracks only when we have an access token and a term
+    // fetching tracks only when we have an access token and a search term
     try {
       const endpoint = 'https://api.spotify.com/v1/search?'
       const requestUrl = new URLSearchParams({
         q: term,
         type: 'track',
-        limit: 5
+        limit: 20
       })
       const request = endpoint + requestUrl.toString()
       const response = await fetch(request, {
@@ -254,8 +282,7 @@ function App() {
               album,
               uri
             } 
-            console.log(song)
-            setTracks((songs)=>([...songs, song]))
+            setTracks((songs)=>[...songs, song])
           })
         }
       }
@@ -268,11 +295,62 @@ function App() {
 
 
   // playlist handlers.
+  
+  // saving a playlistName
+  const savePlaylistName = useCallback(async (name) => {
+    if (!accessToken || !user.id) return;
+    const endpoint = `https://api.spotify.com/v1/users/${user.id}/playlists`
+    const params = {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: name,
+        description: 'Jam tunr',
+        public: false
+      })
+    }
 
-  // update the playlist by name.
-  const updatePlaylistName = (name) => {
-    setPlaylistName(name);
-  };
+    try {
+      const response = await fetch(endpoint, params)
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      const data = await response.json()
+      setPlaylistName({ name: name, id: data.id })
+
+    } catch (error) {
+      console.log(error.message)
+    }
+  }, [accessToken, user.id])
+
+
+  // updating playlist names.
+  const updatePlaylistName = useCallback(async (name, id) => {
+    if (!accessToken || !id) return;
+    
+    const endpoint = `https://api.spotify.com/v1/playlists/${id}`
+    const params = {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: name,
+        description: 'Jam tunr',
+        public: false
+      })
+    }
+
+    try {
+      const response = await fetch(endpoint, params)
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      setPlaylistName({ name: name, id: playlistName.id })
+    } catch (error) {
+      console.log(error.message)
+    }
+  }, [accessToken, playlistName.id])
 
   // adding to playlist.
   const addToPlaylist = (track) => {
@@ -280,16 +358,15 @@ function App() {
     if (playlistTracks.find((item) => item.id === track.id)) {
       return;
     }
-    setPlaylistTracks([...playlistTracks, track]);
+    setPlaylistTracks((playlist) => ([...playlist, track]));
+    setSaved(false)
   };
 
 
   // saving uri's for reference.
   const saveUri = (track) => {
-    if(uriList.includes(track.uri)) {
-      return;
-    }
-    setUriList([...uriList, track.uri]);
+    if(uriList.includes(track.uri)) return;
+    setUriList((playlistUris)=>([...playlistUris, `${track.uri}`]));
   }
 
   // deleting uri's when a song is removed from the saved playlist.
@@ -302,17 +379,52 @@ function App() {
     setPlaylistTracks(playlistTracks.filter((item) => item.id !== track.id));
   };
 
+
+  const savePlaylist = async () => {
+    if(!user.id && !playlistName.id) return
+    
+    // Filter out URIs that have already been saved
+    // const newUris = uriList.filter(uri => !playlistTracks.some(track => track.uri === uri && uriList.includes(uri)))
+    
+    // if(newUris.length === 0) return
+    
+    const endpoint = `https://api.spotify.com/v1/playlists/${playlistName.id}/tracks`
+    const params = {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        uris: uriList,
+        position: 0
+      })
+    }
+
+    try{
+      const response = await fetch(endpoint, params)
+      if(!response.ok) throw new Error(`Error: ${response.status}`)
+      setSaved(true)
+      
+      // reset the uriList when we save tracks.
+      setUriList([])
+      
+    } catch(error){
+      console.log(error.message)
+    }
+  }
+
   // end playlist handlers.
 
 
   return (
     <div>
-      <Header isLogin={loginStatus} handleLogin={handleLogin} handleLogout={handleLogout} />
+      <Header user={user} isLogin={loginStatus} handleLogin={handleLogin} handleLogout={handleLogout} />
       <div className={styles.app}>
         <div className={styles.asideContainer}>
           <div className={styles.aside}>
             {/* custon track list here to save to spotify. */}
-            <PlayList name={playlistName} updatePlaylistName={updatePlaylistName} tracks={playlistTracks} removeFromPlaylist={removeFromPlaylist} deleteUri={deleteUri} />
+            <PlayList name={playlistName.name} id={playlistName.id} savePlaylistName={savePlaylistName} updatePlaylistName={updatePlaylistName} tracks={playlistTracks} removeFromPlaylist={removeFromPlaylist} deleteUri={deleteUri} savePlaylist={savePlaylist} saved={saved}/>
           </div>
           {/* TODO: future add, media player below the playlist */}
         </div>
@@ -321,12 +433,9 @@ function App() {
           <SearchBar searchTerm={searchTerm} search={handleSearch} accessToken={accessToken}/>
           <h1 className={styles.heading}>Good music, good life</h1>
 
-          {tracks && <SearchResults searchTerm={searchTerm} tracks={tracks} addToPlaylist={addToPlaylist} saveUri={saveUri}/>}
-
           {/* results container */}
-          {/* <div className={styles.resultsContainer}>
-            <TrackList tracks={tracks} addToPlaylist={addToPlaylist} saveUri={saveUri} />
-          </div> */}
+          {tracks.length !== 0 ? (<SearchResults searchTerm={searchTerm} tracks={tracks} addToPlaylist={addToPlaylist} saveUri={saveUri}/>) : (<p className={styles.emptyMessage}>A great day starts with some good tunes</p>)}
+
         </div>
       </div>
     </div>

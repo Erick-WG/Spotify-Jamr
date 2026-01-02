@@ -103,6 +103,12 @@
     min-height: 50vh;
 }
 
+.emptyMessage {
+    color: #999;
+    font-style: italic;
+    align-self: center;
+}
+
 .heading {
     font-size: 2em;
     margin: 20px 0;
