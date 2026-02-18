@@ -39,12 +39,8 @@ const Connect = () => {
     const code = urlParams.get('code');
     if (code) {
       dispatch(saveAuthCode(code))
-      window.history.replaceState({}, document.title, "/") // remove the code from the url
-      navigate('/profile')
-    }
-
-    if(codeVerifier && code){
       dispatch(fetchAccessToken({codeVerifier, code}))
+      window.history.replaceState({}, document.title, "/") // remove the code from the url
     }
 
 
@@ -81,7 +77,7 @@ const Connect = () => {
     const clientId = import.meta.env.VITE_CLIENT_ID;
     const redirectUri = import.meta.env.VITE_REDIRECT_URI;
     
-    const scope = 'user-read-private user-read-email';
+    const scope = 'user-read-private user-read-email playlist-modify-private';
     const authUrl = new URL(import.meta.env.VITE_AUTH_ENDPOINT)
     
     const params =  {

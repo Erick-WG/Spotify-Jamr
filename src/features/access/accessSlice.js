@@ -25,12 +25,8 @@ export const fetchAccessToken = createAsyncThunk(
         try {
             const body = await fetch(url, payload);
             const response = await body.json();
-            console.log('response ', response)
             
-            const token = await response.access_token;
-            console.log('token ', token)
-
-            return token
+            return response.access_token;
 
         } catch (error){
             return error

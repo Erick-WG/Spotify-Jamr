@@ -16,7 +16,7 @@ import Header from '@components/Header'
 
 // import { Navigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { selectAuthCode } from '@features/access/accessSlice' 
+import { selectAuthCode, selectCodeVerifier } from '@features/access/accessSlice' 
 import { selectAccessToken } from '@features/access/accessSlice'
 
 
@@ -25,6 +25,7 @@ function App() {
   //* States.
   
   //* Auth and access token states.
+  const codeVerifier = useSelector(selectCodeVerifier)
   const code = useSelector(selectAuthCode)
   const accessToken = useSelector(selectAccessToken)
 
@@ -69,6 +70,7 @@ function App() {
 
           // saving the username
           setUser({name: profileName, id: userId})
+          setLoginStatus(true)
         } catch (error){
           console.log(error.message)
         }
@@ -85,9 +87,9 @@ function App() {
 
   // login handler to trigger getToken function.
   // we can get an access token when the user chooses to login to our app.
-  if(accessToken){
-    setLoginStatus(true)
-  }
+  // if(accessToken){
+  //   setLoginStatus(true)
+  // }
 
   // clearing the local storage on logout 
   const handleLogout = () => {
@@ -102,7 +104,6 @@ function App() {
     // getting and saving access token from the local storage to our app.
     setSearchTerm(term)
     setTracks([])
-    const access_token = window.localStorage.getItem('access_token')
 
     if (!term || !accessToken) return;
 
