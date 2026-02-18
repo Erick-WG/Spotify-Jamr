@@ -1,14 +1,25 @@
 import React, { useState } from 'react'
 import styles from '@css/SearchBar.module.css'
+import { saveSearchTerm } from '@features/search/searchSlice';
+import { useDispatch } from 'react-redux';
 
-const SearchBar = ({ search }) => {
+const SearchBar = ({ searchHandler }) => {
   // {, addTracks}
+
+  const dispatch = useDispatch()
   const [term, setTerm] = useState('');
+
+
   // const [tracksFound, setTracksFound] = useState([])
 
   const handleSearch = (e) => {
     e.preventDefault();
-    search(term)
+
+    dispatch(saveSearchTerm(term))
+    // TODO: dispatch the search term to a thunk to save tracks to our resultsSlice.
+
+    // currently how we search for songs.
+    searchHandler(term)
     setTerm('')
   };
 

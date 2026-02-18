@@ -7,9 +7,14 @@ import styles from '@css/TrackList.module.css'
 // components
 import Track from '@components/Track'
 
+// testing the searchterm slice.
+import { useSelector } from 'react-redux';
+import { selectSearchTerm } from '@features/search/searchSlice';
 
-const TrackList = ({searchTerm, tracks, addToPlaylist, saveUri}) => {
 
+const TrackList = ({ tracks, addToPlaylist, saveUri}) => {
+  const searchTerm = useSelector(selectSearchTerm)
+  
   return (
     <div style={{width: '70%'}}>
       {searchTerm ? (<p className={styles.heading}>Showing results for {searchTerm}...</p>) : ''}

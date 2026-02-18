@@ -1,4 +1,4 @@
-// Code to get code verifier and code challenge for PKCE OAuth2 flow
+//* Generating a code verifier and code challenge for PKCE OAuth2 flow, this will enable us to exchange an auth token for an account access token.
 
 // generate a random string for code verifier
 const generateRandomString = (length) => {
@@ -29,6 +29,7 @@ const base64encode = (input) => {
   
 const hashed = await sha256(codeVerifier)
 const codeChallenge = base64encode(hashed);
+
 
 
 

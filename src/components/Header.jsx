@@ -1,9 +1,10 @@
 import React from 'react'
 import styles from '@css/App.module.css'
+import Connect from '@/features/access/Connect'
 
 
 
-const Header = ({ user, isLogin, handleLogin, handleLogout}) => {
+const Header = ({ user, isLogin, handleLogout}) => {
 
   return (
     <header className={styles.header}>
@@ -13,7 +14,7 @@ const Header = ({ user, isLogin, handleLogin, handleLogout}) => {
         {isLogin ? (
           <p className={styles.logout} onClick={handleLogout}>logout</p>
         ) : (
-          <p className={styles.login} onClick={handleLogin}>login</p>
+          <Connect />
         )}
       </div>
     </header>

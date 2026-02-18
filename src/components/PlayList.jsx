@@ -19,6 +19,7 @@ const PlayList = ({name, id, savePlaylistName, updatePlaylistName, tracks, remov
     setEdit(false);
   }
 
+  // BUG: cannot update playlist name, the button creates a new playlist, with 0 tracks instead of updating the name of the current playlist's name.
   const handleUpdatePlaylistName = (e) => {
     e.preventDefault()
     updatePlaylistName(playlistName, id)

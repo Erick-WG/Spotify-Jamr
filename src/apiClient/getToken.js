@@ -1,3 +1,5 @@
+//* getting an account access token from spotify.
+
 const clientId = import.meta.env.VITE_CLIENT_ID;
 const redirectUri = import.meta.env.VITE_REDIRECT_URI;
 

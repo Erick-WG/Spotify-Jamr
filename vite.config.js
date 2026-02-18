@@ -13,6 +13,7 @@ export default defineConfig({
       '@assets': path.resolve(__dirname, '/src/assets'),
       '@css': path.resolve(__dirname, '/src/assets/css'),
       '@apiClient': path.resolve(__dirname, '/src/apiClient'),
+      '@features': path.resolve(__dirname, '/src/features')
     },
   },
   plugins: [
