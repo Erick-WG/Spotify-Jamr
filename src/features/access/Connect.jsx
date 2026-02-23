@@ -1,5 +1,8 @@
 import React from 'react'
 
+// styles
+import styles from '@css/ConnectButton.module.css'
+
 // slice state update for the code verifyer and the auth code genarated here.
 import { saveCodeVerifyer, saveCodeChallenge, saveAuthCode, selectCodeChallenge, selectCodeVerifier, fetchAccessToken } from './accessSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -95,7 +98,7 @@ const Connect = () => {
 
   return (
     
-      <button onClick={handleGetAuthenticationCode}>
+      <button className={styles.button} onClick={handleGetAuthenticationCode}>
         <p>Connect to Spotify</p>
       </button>
   )
